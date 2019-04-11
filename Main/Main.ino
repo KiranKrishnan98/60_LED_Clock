@@ -44,9 +44,20 @@ void setSevenSeg (int timeDig[]) {
   }
 }
 
+void setSecLeds (int secs) {
+  int ledState = 1;
+  for (int i = 0; i<8; ++i) {
+    for (int j = 0; j<8; ++j, --secs) {
+      if (secs <= 0)
+        ledState = 0;
+      lc.setLed(1, i, j, ledState);
+    }
+  }
+}
+
 void loop() 
 {
-  timeStr = rtc.getTimeStr(); //HH:MM:SS
+  timeStr = rtc.getTimeStr(); //"HH:MM:SS"
 
   //Isolate the digits (ASCII value of '0' is 48)
   timeDig[0] = (int)timeStr[7] - 48;    //s0
@@ -56,8 +67,9 @@ void loop()
   timeDig[4] = (int)timeStr[1] - 48;    //h0
   timeDig[5] = (int)timeStr[0] - 48;    //h1
 
-  //Get the seconds, minutes, and hours as integers
+  //Get the seconds as an integer
   int secs = (10*timeDig[1]) + timeDig[0];
-  int mins = (10*timeDig[3]) + timeDig[2];
-  int hrs = (10*timeDig[5]) + timeDig[4];
+
+  setSevenSeg(timeDig);
+  setSecLeds(secs);
 }
